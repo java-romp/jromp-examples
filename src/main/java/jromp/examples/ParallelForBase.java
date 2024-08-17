@@ -2,6 +2,7 @@ package jromp.examples;
 
 import jromp.Constants;
 import jromp.parallel.Parallel;
+import jromp.parallel.operation.Operations;
 import jromp.parallel.var.PrivateVariable;
 import jromp.parallel.var.SharedVariable;
 import jromp.parallel.var.Variable;
@@ -59,18 +60,21 @@ public class ParallelForBase {
         // Parallel for loop
         Parallel.withThreads(4) //! Should match the value of N and M
                 .parallelFor(0, m, vars, false, (id, start, end, variables) -> {
-                    int nThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
-                    Variable<Integer> sumInternal = variables.get("sum");
-                    sumInternal.set(0);
+                    for (int k = start; k < end; k++) {
+                        int nThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
+                        Variable<Integer> sumInternal = variables.get("sum");
+                        sumInternal.set(0);
 
-                    for (int j1 = 0; j1 < n; j1++) {
-                        final int finalJ = j1;
-                        sumInternal.update(old -> variables.<int[][]>get("b").value()[id][finalJ] *
-                                variables.<int[]>get("c").value()[finalJ]);
+                        for (int j1 = 0; j1 < n; j1++) {
+                            int firstOperand = variables.<int[][]>get("b").value()[id][j1];
+                            int secondOperand = variables.<int[]>get("c").value()[j1];
+
+                            sumInternal.update(Operations.add(firstOperand * secondOperand).get());
+                        }
+
+                        variables.<int[]>get("a").value()[id] = sumInternal.value();
+                        System.out.printf("Thread %d of %d, calculates the iteration i=%d%n", id, nThreads, id);
                     }
-
-                    variables.<int[]>get("a").value()[id] = sumInternal.value();
-                    System.out.printf("Thread %d of %d, calculates the iteration i=%d%n", id, nThreads, id);
                 })
                 .join();
 
