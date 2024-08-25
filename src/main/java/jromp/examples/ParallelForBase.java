@@ -59,7 +59,8 @@ public class ParallelForBase {
 
         // Parallel for loop
         Parallel.withThreads(4) //! Should match the value of N and M
-                .parallelFor(0, m, vars, false, (id, start, end, variables) -> {
+                .withVariables(vars)
+                .parallelFor(0, m, false, (id, start, end, variables) -> {
                     for (int k = start; k < end; k++) {
                         int nThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
                         Variable<Integer> sumInternal = variables.get("sum");

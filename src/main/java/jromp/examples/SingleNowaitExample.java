@@ -10,7 +10,7 @@ public class SingleNowaitExample {
 
         Parallel.withThreads(4)
                 .block((id, vars) -> System.out.printf("Block executed by thread %d%n", id))
-                .singleBlock((id, vars) -> {
+                .singleBlock(true, (id, vars) -> {
                     singleVar.set(1);
                     System.out.printf("Single block executed by thread %d%n", id);
                 })

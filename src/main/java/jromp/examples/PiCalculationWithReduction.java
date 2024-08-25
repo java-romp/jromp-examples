@@ -16,7 +16,8 @@ public class PiCalculationWithReduction {
         long initialTime = System.nanoTime();
 
         Parallel.defaultConfig()
-                .parallelFor(1, n + 1, vars, false, (id, start, end, variables) -> {
+                .withVariables(vars)
+                .parallelFor(1, n + 1, false, (id, start, end, variables) -> {
                     double x;
                     double sum = 0.0;
 

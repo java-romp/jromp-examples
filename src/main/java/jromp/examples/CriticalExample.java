@@ -11,7 +11,8 @@ public class CriticalExample {
         Variables variables = Variables.create().add("criticalVar", new SharedVariable<>(0));
 
         Parallel.withThreads(4)
-                .block(variables, ((id, vars) -> {
+                .withVariables(variables)
+                .block(((id, vars) -> {
                     System.out.printf("1 - Thread %d%n", id);
 
                     Critical.enter("criticalVar", id, vars, (i, v) -> {

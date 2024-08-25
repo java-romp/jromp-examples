@@ -12,7 +12,8 @@ public class PrivateVariableExample {
         Variables variables = Variables.create().add("privateVariable", privateVariable);
 
         Parallel.defaultConfig()
-                .block(variables, (id, vars) -> {
+                .withVariables(variables)
+                .block((id, vars) -> {
                     Variable<Integer> privateVar = vars.get("privateVariable");
                     privateVar.set(id);
                     System.out.printf("Thread %d\n", privateVar.value());

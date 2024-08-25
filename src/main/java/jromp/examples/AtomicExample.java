@@ -11,7 +11,8 @@ public class AtomicExample {
         Variables variables = Variables.create().add("count", new SharedVariable<>(0));
 
         Parallel.defaultConfig()
-                .block(variables, (id, vars) -> Atomic.update("count", Operations.add(1), vars))
+                .withVariables(variables)
+                .block((id, vars) -> Atomic.update("count", Operations.add(1), vars))
                 .join();
 
         System.out.printf("Number of threads: %d%n", variables.<Integer>get("count").value());

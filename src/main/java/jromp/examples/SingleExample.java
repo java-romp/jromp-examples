@@ -8,10 +8,9 @@ public class SingleExample {
     public static void main(String[] args) {
         Variable<Integer> singleVar = new SharedVariable<>(0);
 
-        // Todo: add the nowait
         Parallel.withThreads(4)
                 .block((id, vars) -> System.out.printf("1 - Thread %d%n", id))
-                .singleBlock((id, vars) -> {
+                .singleBlock(false, (id, vars) -> {
                     singleVar.set(1);
                     System.out.printf("Single block executed by thread %d%n", id);
                 })
