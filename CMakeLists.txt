@@ -30,3 +30,6 @@ add_executable(private_variable ${EXAMPLES_DIR}/private_variable.c)
 add_executable(shared_variable ${EXAMPLES_DIR}/shared_variable.c)
 add_executable(first_private_variable ${EXAMPLES_DIR}/first_private_variable.c)
 add_executable(last_private_variable ${EXAMPLES_DIR}/last_private_variable.c)
+
+add_executable(mandelbrot_original ${EXAMPLES_DIR}/mandelbrot/mandelbrot_original.c)
+add_executable(mandelbrot_parallel ${EXAMPLES_DIR}/mandelbrot/mandelbrot_parallel.c)
