@@ -1,10 +1,4 @@
-# include <math.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <time.h>
-#include <sys/time.h>
-
-#define TIME_SIZE 40
+#include "mandelbrot.h"
 
 int explode(double x, double y, int count_max);
 int ppm_write(char *output_filename, int x_size, int y_size, int *r, int *g, int *b);
@@ -19,12 +13,12 @@ int main() {
     int c;
     int c_max;
     int *count;
-    const int count_max = 4000;
+    const int count_max = COUNT_MAX;
     char *filename = "mandelbrot_c_original.ppm";
     int i;
     int j;
-    const int m = 4000;
-    const int n = 4000;
+    const int m = IMAGE_SIZE;
+    const int n = IMAGE_SIZE;
     double x;
     const double x_max = 1.25;
     const double x_min = -2.25;

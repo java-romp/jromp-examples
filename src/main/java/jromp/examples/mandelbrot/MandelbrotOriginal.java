@@ -20,12 +20,12 @@ public class MandelbrotOriginal {
         int c;
         int cMax;
         int[] count;
-        final int countMax = 4000;
+        final int countMax = Mandelbrot.COUNT_MAX;
         String filename = "mandelbrot_java_original.ppm";
         int i;
         int j;
-        final int m = 4000;
-        final int n = 4000;
+        final int m = Mandelbrot.IMAGE_SIZE;
+        final int n = Mandelbrot.IMAGE_SIZE;
         double x;
         final double xMax = 1.25;
         final double xMin = -2.25;

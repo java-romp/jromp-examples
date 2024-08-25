@@ -1,18 +1,7 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
 #include <omp.h>
+#include "mandelbrot.h"
 
-// Constants for omp
-
-#define OMP_CHUNK_SIZE 64
-#define OMP_STATIC_SCHEDULE static, OMP_CHUNK_SIZE
-#define OMP_GUIDED_SCHEDULE guided, OMP_CHUNK_SIZE
-#define OMP_DYNAMIC_SCHEDULE dynamic
-#define OMP_SCHEDULE OMP_DYNAMIC_SCHEDULE
-#define TIME_SIZE 40
+#define THREADS 12
 
 int explode(double x, double y, int count_max);
 int ppm_write(char *output_filename, int x_size, int y_size, int *r, int *g, int *b);
@@ -20,23 +9,19 @@ int ppm_write_data(FILE *file_out, int x_size, int y_size, int *r, int *g, int *
 int ppm_write_header(FILE *file_out, int x_size, int y_size, int rgb_max);
 void timestamp();
 
-int main(int argc, char *argv[]) {
-    omp_set_nested(1);
-    // collapse(2)
-
-    const int threads = 12;
+int main() {
     int *r;
     int *g;
     int *b;
     int c;
     int c_max;
     int *count;
-    const int count_max = 4000;
+    const int count_max = COUNT_MAX;
     char *filename = "mandelbrot_c_parallel.ppm";
     int i;
     int j;
-    const int m = 4000;
-    const int n = 4000;
+    const int m = IMAGE_SIZE;
+    const int n = IMAGE_SIZE;
     double x;
     const double x_max = 1.25;
     const double x_min = -2.25;
@@ -73,9 +58,9 @@ int main(int argc, char *argv[]) {
     #pragma omp parallel \
         private(i, j, x, y) \
         shared(count, m, n, x_max, x_min, y_max, y_min, count_max) \
-        num_threads(threads)
+        num_threads(THREADS)
     {
-        #pragma omp for schedule(OMP_SCHEDULE) private(i, j, x, y)
+        #pragma omp for private(i, j, x, y)
         for (i = 0; i < m; i++) {
             x = ((double) i * x_max + (double) (m - i - 1) * x_min) / (double) (m - 1);
 
@@ -89,7 +74,7 @@ int main(int argc, char *argv[]) {
         /* Set C_MAX to the maximum count. */
         c_max = 0;
 
-        #pragma omp for reduction(max:c_max) schedule(OMP_SCHEDULE) private(i, j)
+        #pragma omp for reduction(max:c_max) private(i, j)
         for (i = 0; i < m; i++) {
             for (j = 0; j < n; j++) {
                 if (c_max < count[i + j * m]) {

@@ -15,6 +15,8 @@ else ()
     message(FATAL_ERROR "OpenMP not found")
 endif ()
 
+link_libraries(m)
+
 set(EXAMPLES_DIR src/main/c/jromp/examples)
 
 add_executable(basic_usage_1 ${EXAMPLES_DIR}/basic_usage_1.c)
@@ -31,5 +33,7 @@ add_executable(shared_variable ${EXAMPLES_DIR}/shared_variable.c)
 add_executable(first_private_variable ${EXAMPLES_DIR}/first_private_variable.c)
 add_executable(last_private_variable ${EXAMPLES_DIR}/last_private_variable.c)
 
-add_executable(mandelbrot_original ${EXAMPLES_DIR}/mandelbrot/mandelbrot_original.c)
-add_executable(mandelbrot_parallel ${EXAMPLES_DIR}/mandelbrot/mandelbrot_parallel.c)
+add_executable(mandelbrot_original ${EXAMPLES_DIR}/mandelbrot/mandelbrot_original.c
+        ${EXAMPLES_DIR}/mandelbrot/mandelbrot.h)
+add_executable(mandelbrot_parallel ${EXAMPLES_DIR}/mandelbrot/mandelbrot_parallel.c
+        ${EXAMPLES_DIR}/mandelbrot/mandelbrot.h)
