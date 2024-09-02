@@ -41,3 +41,4 @@ build/
 cmake-*
 *.ppm
 *.o
+logs
