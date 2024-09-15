@@ -1,7 +1,11 @@
 package jromp.examples.mandelbrot;
 
 import jromp.parallel.Parallel;
-import jromp.parallel.var.*;
+import jromp.parallel.var.PrivateVariable;
+import jromp.parallel.var.ReductionVariable;
+import jromp.parallel.var.SharedVariable;
+import jromp.parallel.var.Variable;
+import jromp.parallel.var.Variables;
 import jromp.parallel.var.reduction.Operation;
 
 import java.io.File;
@@ -10,6 +14,12 @@ import java.io.PrintStream;
 import java.util.Date;
 
 import static java.lang.Math.sqrt;
+import static jromp.examples.mandelbrot.Mandelbrot.COUNT_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.IMAGE_SIZE;
+import static jromp.examples.mandelbrot.Mandelbrot.X_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.X_MIN;
+import static jromp.examples.mandelbrot.Mandelbrot.Y_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.Y_MIN;
 
 @SuppressWarnings("all") // Hide warnings in the IDE.
 public class MandelbrotParallel {
@@ -25,18 +35,14 @@ public class MandelbrotParallel {
         int c;
         int cMax;
         int[] count;
-        final int countMax = Mandelbrot.COUNT_MAX;
+        final int countMax = COUNT_MAX;
         String filename = "mandelbrot_java_parallel.ppm";
         int i;
         int j;
-        final int m = Mandelbrot.IMAGE_SIZE;
-        final int n = Mandelbrot.IMAGE_SIZE;
+        final int m = IMAGE_SIZE;
+        final int n = IMAGE_SIZE;
         double x;
-        final double xMax = 1.25;
-        final double xMin = -2.25;
         double y;
-        final double yMax = 1.75;
-        final double yMin = -1.75;
         double[] tv1 = new double[1];
         double[] tv2 = new double[1];
 
@@ -49,8 +55,8 @@ public class MandelbrotParallel {
         System.out.printf("  Create an ASCII PPM image of the Mandelbrot set.\n");
         System.out.printf("\n");
         System.out.printf("  For each point C = X + i*Y\n");
-        System.out.printf("  with X range [%f,%f]\n", xMin, xMax);
-        System.out.printf("  and  Y range [%f,%f]\n", yMin, yMax);
+        System.out.printf("  with X range [%f,%f]\n", X_MIN, X_MAX);
+        System.out.printf("  and  Y range [%f,%f]\n", Y_MIN, Y_MAX);
         System.out.printf("  carry out %d iterations of the map\n", countMax);
         System.out.printf("  Z(n+1) = Z(n)^2 + C.\n");
         System.out.printf("  If the iterates stay bounded (norm less than 2)\n");
@@ -73,10 +79,10 @@ public class MandelbrotParallel {
                      .add("count", new SharedVariable<>(new int[m * n]))
                      .add("m", new SharedVariable<>(m))
                      .add("n", new SharedVariable<>(n))
-                     .add("xMax", new SharedVariable<>(xMax))
-                     .add("xMin", new SharedVariable<>(xMin))
-                     .add("yMax", new SharedVariable<>(yMax))
-                     .add("yMin", new SharedVariable<>(yMin))
+                     .add("xMax", new SharedVariable<>(X_MAX))
+                     .add("xMin", new SharedVariable<>(X_MIN))
+                     .add("yMax", new SharedVariable<>(Y_MAX))
+                     .add("yMin", new SharedVariable<>(Y_MIN))
                      .add("countMax", new SharedVariable<>(countMax))
                      .add("cMax", new ReductionVariable<>(Operation.MAX.getOp(), 0));
 
@@ -88,11 +94,11 @@ public class MandelbrotParallel {
                     .parallelFor(0, m, false, (id, start, end, vars) -> {
                         for (int i_i = start; i_i < end; i_i++) {
                             Variable<Double> x1 = vars.get("x");
-                            x1.set(((double) i_i * xMax + (double) (m - i_i - 1) * xMin) / (double) (m - 1));
+                            x1.set(((double) i_i * X_MAX + (double) (m - i_i - 1) * X_MIN) / (double) (m - 1));
 
                             for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
                                 Variable<Double> y1 = vars.get("y");
-                                y1.set(((double) j_j * yMax + (double) (n - j_j - 1) * yMin) / (double) (n - 1));
+                                y1.set(((double) j_j * Y_MAX + (double) (n - j_j - 1) * Y_MIN) / (double) (n - 1));
 
                                 int explode = explode(x1.value(), y1.value(), countMax);
                                 vars.<int[]>get("count").value()[i_i + j_j * m] = explode;
@@ -118,7 +124,6 @@ public class MandelbrotParallel {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
-
 
         final double executionSeconds = (tv2[0] - tv1[0]) / 1.0e9;
         System.out.printf("Wall clock time = %12.4g sec\n", executionSeconds);

@@ -20,11 +20,7 @@ int main() {
     const int m = IMAGE_SIZE;
     const int n = IMAGE_SIZE;
     double x;
-    const double x_max = 1.25;
-    const double x_min = -2.25;
     double y;
-    const double y_max = 1.75;
-    const double y_min = -1.75;
     struct timeval tv1, tv2;
     struct timezone tz;
 

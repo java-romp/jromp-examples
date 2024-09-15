@@ -6,6 +6,12 @@ import java.io.PrintStream;
 import java.util.Date;
 
 import static java.lang.Math.sqrt;
+import static jromp.examples.mandelbrot.Mandelbrot.COUNT_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.IMAGE_SIZE;
+import static jromp.examples.mandelbrot.Mandelbrot.X_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.X_MIN;
+import static jromp.examples.mandelbrot.Mandelbrot.Y_MAX;
+import static jromp.examples.mandelbrot.Mandelbrot.Y_MIN;
 
 @SuppressWarnings("all") // Hide warnings in the IDE.
 public class MandelbrotOriginal {
@@ -20,18 +26,14 @@ public class MandelbrotOriginal {
         int c;
         int cMax;
         int[] count;
-        final int countMax = Mandelbrot.COUNT_MAX;
+        final int countMax = COUNT_MAX;
         String filename = "mandelbrot_java_original.ppm";
         int i;
         int j;
-        final int m = Mandelbrot.IMAGE_SIZE;
-        final int n = Mandelbrot.IMAGE_SIZE;
+        final int m = IMAGE_SIZE;
+        final int n = IMAGE_SIZE;
         double x;
-        final double xMax = 1.25;
-        final double xMin = -2.25;
         double y;
-        final double yMax = 1.75;
-        final double yMin = -1.75;
         double tv1, tv2;
 
         timestamp();
@@ -43,8 +45,8 @@ public class MandelbrotOriginal {
         System.out.printf("  Create an ASCII PPM image of the Mandelbrot set.\n");
         System.out.printf("\n");
         System.out.printf("  For each point C = X + i*Y\n");
-        System.out.printf("  with X range [%f,%f]\n", xMin, xMax);
-        System.out.printf("  and  Y range [%f,%f]\n", yMin, yMax);
+        System.out.printf("  with X range [%f,%f]\n", X_MIN, X_MAX);
+        System.out.printf("  and  Y range [%f,%f]\n", Y_MIN, Y_MAX);
         System.out.printf("  carry out %d iterations of the map\n", countMax);
         System.out.printf("  Z(n+1) = Z(n)^2 + C.\n");
         System.out.printf("  If the iterates stay bounded (norm less than 2)\n");
@@ -59,10 +61,10 @@ public class MandelbrotOriginal {
         tv1 = System.nanoTime();
 
         for (i = 0; i < m; i++) {
-            x = ((double) i * xMax + (double) (m - i - 1) * xMin) / (double) (m - 1);
+            x = ((double) i * X_MAX + (double) (m - i - 1) * X_MIN) / (double) (m - 1);
 
             for (j = 0; j < n; j++) {
-                y = ((double) j * yMax + (double) (n - j - 1) * yMin) / (double) (n - 1);
+                y = ((double) j * Y_MAX + (double) (n - j - 1) * Y_MIN) / (double) (n - 1);
 
                 count[i + j * m] = explode(x, y, countMax);
             }
