@@ -8,7 +8,7 @@ import jromp.parallel.var.ReductionVariable;
 import jromp.parallel.var.SharedVariable;
 import jromp.parallel.var.Variable;
 import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.Operation;
+import jromp.parallel.var.reduction.ReductionOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ public class MatrixMultiplicationWithParallelization {
 
         if (OPTIONAL_PART) {
             // Add a new variable to the variables object
-            variables.add("sum", new ReductionVariable<>(Operation.SUM.getOp(), 0.0));
+            variables.add("sum", new ReductionVariable<>(ReductionOperations.sum(), 0.0));
 
             // Calculate the sum of all elements in the matrix
             Parallel.withThreads(4)

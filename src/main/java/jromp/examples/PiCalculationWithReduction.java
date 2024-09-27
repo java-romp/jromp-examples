@@ -4,13 +4,13 @@ import jromp.parallel.Parallel;
 import jromp.parallel.operation.Operations;
 import jromp.parallel.var.ReductionVariable;
 import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.Sum;
+import jromp.parallel.var.reduction.ReductionOperations;
 
 public class PiCalculationWithReduction {
     public static void main(String[] args) {
         int n = 100000;
         double h = 1.0 / n;
-        ReductionVariable<Double> result = new ReductionVariable<>(new Sum<>(), 0d);
+        ReductionVariable<Double> result = new ReductionVariable<>(ReductionOperations.sum(), 0d);
         Variables vars = Variables.create().add("sum", result);
 
         long initialTime = System.nanoTime();

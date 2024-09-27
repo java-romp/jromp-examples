@@ -6,7 +6,7 @@ import jromp.parallel.var.ReductionVariable;
 import jromp.parallel.var.SharedVariable;
 import jromp.parallel.var.Variable;
 import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.Operation;
+import jromp.parallel.var.reduction.ReductionOperations;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class MandelbrotParallel {
                      .add("yMax", new SharedVariable<>(Y_MAX))
                      .add("yMin", new SharedVariable<>(Y_MIN))
                      .add("countMax", new SharedVariable<>(countMax))
-                     .add("cMax", new ReductionVariable<>(Operation.MAX.getOp(), 0));
+                     .add("cMax", new ReductionVariable<>(ReductionOperations.max(), 0));
 
             Parallel.withThreads(threads)
                     .withVariables(variables)
