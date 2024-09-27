@@ -88,17 +88,15 @@ public class MandelbrotParallel {
 
             Parallel.withThreads(threads)
                     .withVariables(variables)
-                    .singleBlock(false, (id, vars) -> {
-                        tv1[0] = System.nanoTime();
-                    })
+                    .singleBlock(false, (id, vars) -> tv1[0] = System.nanoTime())
                     .parallelFor(0, m, false, (id, start, end, vars) -> {
                         for (int i_i = start; i_i < end; i_i++) {
                             Variable<Double> x1 = vars.get("x");
-                            x1.set(((double) i_i * X_MAX + (double) (m - i_i - 1) * X_MIN) / (double) (m - 1));
+                            x1.set((i_i * X_MAX + (m - i_i - 1) * X_MIN) / (m - 1));
 
                             for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
                                 Variable<Double> y1 = vars.get("y");
-                                y1.set(((double) j_j * Y_MAX + (double) (n - j_j - 1) * Y_MIN) / (double) (n - 1));
+                                y1.set((j_j * Y_MAX + (n - j_j - 1) * Y_MIN) / (n - 1));
 
                                 int explode = explode(x1.value(), y1.value(), countMax);
                                 vars.<int[]>get("count").value()[i_i + j_j * m] = explode;
@@ -117,9 +115,7 @@ public class MandelbrotParallel {
                             }
                         }
                     })
-                    .singleBlock(false, (id, vars) -> {
-                        tv2[0] = System.nanoTime();
-                    })
+                    .singleBlock(false, (id, vars) -> tv2[0] = System.nanoTime())
                     .join();
         } catch (IllegalStateException e) {
             e.printStackTrace();
