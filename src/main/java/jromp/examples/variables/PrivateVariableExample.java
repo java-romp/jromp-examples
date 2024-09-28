@@ -1,4 +1,4 @@
-package jromp.examples;
+package jromp.examples.variables;
 
 import jromp.parallel.Parallel;
 import jromp.parallel.var.PrivateVariable;

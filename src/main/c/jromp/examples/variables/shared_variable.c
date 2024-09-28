@@ -4,7 +4,9 @@
 int main(int argc, char *argv[]) {
     int shared_variable = 0;
 
-    // NOTE: this code is not thread-safe
+    // #################################################################
+    // NOTE: this code is not thread-safe (unexpected results may occur)
+    // #################################################################
 
     #pragma omp parallel shared(shared_variable)
     {
