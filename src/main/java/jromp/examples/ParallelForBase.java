@@ -1,14 +1,16 @@
 package jromp.examples;
 
 import jromp.Constants;
-import jromp.parallel.Parallel;
-import jromp.parallel.operation.Operations;
-import jromp.parallel.var.PrivateVariable;
-import jromp.parallel.var.SharedVariable;
-import jromp.parallel.var.Variable;
-import jromp.parallel.var.Variables;
+import jromp.JROMP;
+import jromp.operation.Operations;
+import jromp.var.PrivateVariable;
+import jromp.var.SharedVariable;
+import jromp.var.Variable;
+import jromp.var.Variables;
 
 import java.util.Random;
+
+import static jromp.JROMP.getThreadNum;
 
 public class ParallelForBase {
     // A simple random number generator.
@@ -58,10 +60,11 @@ public class ParallelForBase {
             .add("sum", new PrivateVariable<>(sum));
 
         // Parallel for loop
-        Parallel.withThreads(4) //! Should match the value of N and M
-                .withVariables(vars)
-                .parallelFor(0, m, false, (id, start, end, variables) -> {
+        JROMP.withThreads(4) //! Should match the value of N and M
+             .withVariables(vars)
+             .parallelFor(0, m, false, (start, end, variables) -> {
                     for (int k = start; k < end; k++) {
+                        int id = getThreadNum();
                         int nThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
                         Variable<Integer> sumInternal = variables.get("sum");
                         sumInternal.set(0);
@@ -77,7 +80,7 @@ public class ParallelForBase {
                         System.out.printf("Thread %d of %d, calculates the iteration i=%d%n", id, nThreads, id);
                     }
                 })
-                .join();
+             .join();
 
         for (i = 0; i < M; i++) {
             System.out.printf("a[%d] = %d\n", i, a[i]);

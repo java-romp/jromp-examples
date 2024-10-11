@@ -1,16 +1,17 @@
 package jromp.examples;
 
 import jromp.Constants;
-import jromp.parallel.Parallel;
-import jromp.parallel.operation.Operations;
-import jromp.parallel.utils.Utils;
-import jromp.parallel.var.ReductionVariable;
-import jromp.parallel.var.SharedVariable;
-import jromp.parallel.var.Variable;
-import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.ReductionOperations;
+import jromp.JROMP;
+import jromp.operation.Operations;
+import jromp.var.ReductionVariable;
+import jromp.var.SharedVariable;
+import jromp.var.Variable;
+import jromp.var.Variables;
+import jromp.var.reduction.ReductionOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static jromp.JROMP.getWTime;
 
 public class MatrixMultiplicationWithParallelization {
     private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationWithParallelization.class);
@@ -19,12 +20,12 @@ public class MatrixMultiplicationWithParallelization {
 
     public static void main(String[] args) {
         // Print the available number of threads
-        Parallel.defaultConfig()
-                .singleBlock(false, (id, variables) -> {
-                    int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
-                    logger.info("Number of threads: {}", numThreads);
-                })
-                .join();
+        JROMP.allThreads()
+             .singleBlock(false, variables -> {
+                 int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
+                 logger.info("Number of threads: {}", numThreads);
+             })
+             .join();
 
         // Allocate memory for matrices
         double[] a = new double[N * N];
@@ -38,7 +39,7 @@ public class MatrixMultiplicationWithParallelization {
         }
 
         // Start the timer
-        final double startTimer = Utils.getWTime();
+        final double startTimer = getWTime();
 
         // Create the variables that are going to be used in the parallel block
         Variables variables = Variables.create();
@@ -47,24 +48,24 @@ public class MatrixMultiplicationWithParallelization {
         variables.add("c", new SharedVariable<>(c));
 
         // Matrix multiplication
-        Parallel.defaultConfig()
-                .withVariables(variables)
-                .parallelFor(0, N, false, (id, start, end, vars) -> {
-                    double[] aInternal = vars.<double[]>get("a").value();
-                    double[] bInternal = vars.<double[]>get("b").value();
-                    double[] cInternal = vars.<double[]>get("c").value();
+        JROMP.allThreads()
+             .withVariables(variables)
+             .parallelFor(0, N, false, (start, end, vars) -> {
+                 double[] aInternal = vars.<double[]>get("a").value();
+                 double[] bInternal = vars.<double[]>get("b").value();
+                 double[] cInternal = vars.<double[]>get("c").value();
 
-                    for (int i = start; i < end; i++) {
-                        for (int j = 0; j < N; j++) {
-                            cInternal[i * N + j] = 0.0;
+                 for (int i = start; i < end; i++) {
+                     for (int j = 0; j < N; j++) {
+                         cInternal[i * N + j] = 0.0;
 
-                            for (int k = 0; k < N; k++) {
-                                cInternal[i * N + j] += aInternal[i * N + k] * bInternal[k * N + j];
-                            }
-                        }
-                    }
-                })
-                .join();
+                         for (int k = 0; k < N; k++) {
+                             cInternal[i * N + j] += aInternal[i * N + k] * bInternal[k * N + j];
+                         }
+                     }
+                 }
+             })
+             .join();
 
         // region Optional(advanced): Create another loop with reduction variable.
 
@@ -73,17 +74,17 @@ public class MatrixMultiplicationWithParallelization {
             variables.add("sum", new ReductionVariable<>(ReductionOperations.sum(), 0.0));
 
             // Calculate the sum of all elements in the matrix
-            Parallel.withThreads(4)
-                    .withVariables(variables)
-                    .parallelFor(0, N * N, false, (id, start, end, vars) -> {
-                        double[] cInternal = vars.<double[]>get("c").value();
-                        Variable<Double> sumInternal = vars.get("sum");
+            JROMP.withThreads(4)
+                 .withVariables(variables)
+                 .parallelFor(0, N * N, false, (start, end, vars) -> {
+                     double[] cInternal = vars.<double[]>get("c").value();
+                     Variable<Double> sumInternal = vars.get("sum");
 
-                        for (int i = start; i < end; i++) {
-                            sumInternal.update(Operations.add(cInternal[i]));
-                        }
-                    })
-                    .join();
+                     for (int i = start; i < end; i++) {
+                         sumInternal.update(Operations.add(cInternal[i]));
+                     }
+                 })
+                 .join();
 
             logger.info("Total sum: {}", variables.<Double>get("sum").value());
         }
@@ -91,7 +92,7 @@ public class MatrixMultiplicationWithParallelization {
         // endregion
 
         // Print the execution time
-        final double endTimer = Utils.getWTime();
+        final double endTimer = getWTime();
         logger.info("Time: {}", endTimer - startTimer);
 
         // Free memory

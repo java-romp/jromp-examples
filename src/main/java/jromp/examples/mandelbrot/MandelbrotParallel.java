@@ -1,12 +1,12 @@
 package jromp.examples.mandelbrot;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.var.PrivateVariable;
-import jromp.parallel.var.ReductionVariable;
-import jromp.parallel.var.SharedVariable;
-import jromp.parallel.var.Variable;
-import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.ReductionOperations;
+import jromp.JROMP;
+import jromp.var.PrivateVariable;
+import jromp.var.ReductionVariable;
+import jromp.var.SharedVariable;
+import jromp.var.Variable;
+import jromp.var.Variables;
+import jromp.var.reduction.ReductionOperations;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,37 +86,37 @@ public class MandelbrotParallel {
                      .add("countMax", new SharedVariable<>(countMax))
                      .add("cMax", new ReductionVariable<>(ReductionOperations.max(), 0));
 
-            Parallel.withThreads(threads)
-                    .withVariables(variables)
-                    .singleBlock(false, (id, vars) -> tv1[0] = System.nanoTime())
-                    .parallelFor(0, m, false, (id, start, end, vars) -> {
-                        for (int i_i = start; i_i < end; i_i++) {
-                            Variable<Double> x1 = vars.get("x");
-                            x1.set((i_i * X_MAX + (m - i_i - 1) * X_MIN) / (m - 1));
+            JROMP.withThreads(threads)
+                 .withVariables(variables)
+                 .singleBlock(false, (vars) -> tv1[0] = System.nanoTime())
+                 .parallelFor(0, m, false, (start, end, vars) -> {
+                     for (int i_i = start; i_i < end; i_i++) {
+                         Variable<Double> x1 = vars.get("x");
+                         x1.set((i_i * X_MAX + (m - i_i - 1) * X_MIN) / (m - 1));
 
-                            for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
-                                Variable<Double> y1 = vars.get("y");
-                                y1.set((j_j * Y_MAX + (n - j_j - 1) * Y_MIN) / (n - 1));
+                         for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
+                             Variable<Double> y1 = vars.get("y");
+                             y1.set((j_j * Y_MAX + (n - j_j - 1) * Y_MIN) / (n - 1));
 
-                                int explode = explode(x1.value(), y1.value(), countMax);
-                                vars.<int[]>get("count").value()[i_i + j_j * m] = explode;
-                            }
-                        }
-                    })
-                    .parallelFor(0, m, false, (id, start, end, vars) -> {
-                        for (int i_i = start; i_i < end; i_i++) {
-                            for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
-                                Variable<Integer> cMax_ = vars.get("cMax");
+                             int explode = explode(x1.value(), y1.value(), countMax);
+                             vars.<int[]>get("count").value()[i_i + j_j * m] = explode;
+                         }
+                     }
+                 })
+                 .parallelFor(0, m, false, (start, end, vars) -> {
+                     for (int i_i = start; i_i < end; i_i++) {
+                         for (int j_j = 0; j_j < vars.<Integer>get("n").value(); j_j++) {
+                             Variable<Integer> cMax_ = vars.get("cMax");
 
-                                int count1 = vars.<int[]>get("count").value()[i_i + j_j * m];
-                                if (cMax_.value() < count1) {
-                                    cMax_.set(count1);
-                                }
-                            }
-                        }
-                    })
-                    .singleBlock(false, (id, vars) -> tv2[0] = System.nanoTime())
-                    .join();
+                             int count1 = vars.<int[]>get("count").value()[i_i + j_j * m];
+                             if (cMax_.value() < count1) {
+                                 cMax_.set(count1);
+                             }
+                         }
+                     }
+                 })
+                 .singleBlock(false, (vars) -> tv2[0] = System.nanoTime())
+                 .join();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }

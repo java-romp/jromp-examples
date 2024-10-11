@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
             printf("Single block executed by thread %d\n", omp_get_thread_num());
         } // Implicit barrier
 
-        printf("Barrier reached\n");
-        printf("2 - Thread %d\n", omp_get_thread_num());
+        printf("Barrier passed\n");
+        printf("Thread %d has finished\n", omp_get_thread_num());
     }
 
     printf("Single var: %d\n", singleVar);

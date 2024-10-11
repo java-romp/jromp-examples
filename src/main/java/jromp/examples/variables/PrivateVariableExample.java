@@ -1,11 +1,13 @@
 package jromp.examples.variables;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.var.PrivateVariable;
-import jromp.parallel.var.Variable;
-import jromp.parallel.var.Variables;
+import jromp.JROMP;
+import jromp.var.PrivateVariable;
+import jromp.var.Variable;
+import jromp.var.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static jromp.JROMP.getThreadNum;
 
 public class PrivateVariableExample {
     private static final Logger logger = LoggerFactory.getLogger(PrivateVariableExample.class);
@@ -13,14 +15,14 @@ public class PrivateVariableExample {
     public static void main(String[] args) {
         Variables variables = Variables.create().add("privateVariable", new PrivateVariable<>(-1));
 
-        Parallel.defaultConfig()
-                .withVariables(variables)
-                .block((id, vars) -> {
-                    Variable<Integer> privateVar = vars.get("privateVariable");
-                    privateVar.set(id);
-                    logger.info("Thread {}", privateVar.value());
-                })
-                .join();
+        JROMP.allThreads()
+             .withVariables(variables)
+             .block(vars -> {
+                 Variable<Integer> privateVar = vars.get("privateVariable");
+                 privateVar.set(getThreadNum());
+                 logger.info("Thread {}", privateVar.value());
+             })
+             .join();
 
         logger.info("Private variable {}", variables.<Integer>get("privateVariable").value());
     }

@@ -1,10 +1,12 @@
 package jromp.examples.variables;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.var.FirstPrivateVariable;
-import jromp.parallel.var.Variables;
+import jromp.JROMP;
+import jromp.var.FirstPrivateVariable;
+import jromp.var.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static jromp.JROMP.getThreadNum;
 
 public class FirstPrivateVariableExample {
     private static final Logger logger = LoggerFactory.getLogger(FirstPrivateVariableExample.class);
@@ -15,14 +17,14 @@ public class FirstPrivateVariableExample {
 
         logger.info("Value of \"val\" before the OpenMP parallel region: {}.", val);
 
-        Parallel.withThreads(4)
-                .withVariables(variables)
-                .block((id, vars) -> {
-                    logger.info("Thread {} sees \"val\" = {}, and updates it to be {}.",
-                                id, vars.get("firstPrivateVariable").value(), id);
-                    vars.get("firstPrivateVariable").set(id);
-                })
-                .join();
+        JROMP.withThreads(4)
+             .withVariables(variables)
+             .block(vars -> {
+                 logger.info("Thread {} sees \"val\" = {}, and updates it to be {}.",
+                             getThreadNum(), vars.get("firstPrivateVariable").value(), getThreadNum());
+                 vars.get("firstPrivateVariable").set(getThreadNum());
+             })
+             .join();
 
         // Value after the parallel region; unchanged.
         logger.info("Value of \"val\" after the OpenMP parallel region: {}.", val);

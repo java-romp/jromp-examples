@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
     #pragma omp parallel num_threads(4) shared(singleVar)
     {
-        printf("Block executed by thread %d\n", omp_get_thread_num());
+        printf("1 - Thread %d\n", omp_get_thread_num());
 
         #pragma omp single
         {

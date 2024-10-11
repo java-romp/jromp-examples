@@ -1,12 +1,12 @@
 package jromp.examples.variables;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.var.LastPrivateVariable;
-import jromp.parallel.var.Variables;
+import jromp.JROMP;
+import jromp.var.LastPrivateVariable;
+import jromp.var.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
+import static jromp.JROMP.getThreadNum;
 
 public class LastPrivateVariableExample {
     private static final Logger logger = LoggerFactory.getLogger(LastPrivateVariableExample.class);
@@ -17,10 +17,10 @@ public class LastPrivateVariableExample {
 
         logger.info("Value of \"val\" before the OpenMP parallel region: {}.", val);
 
-        Parallel.withThreads(4)
-                .withVariables(variables)
-                .block((id, vars) -> vars.get("lastPrivateVariable").set(id))
-                .join();
+        JROMP.withThreads(4)
+             .withVariables(variables)
+             .block(vars -> vars.get("lastPrivateVariable").set(getThreadNum()))
+             .join();
 
         Integer lastValue = (Integer) variables.get("lastPrivateVariable").value();
         logger.info(

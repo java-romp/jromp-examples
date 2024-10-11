@@ -1,10 +1,10 @@
 package jromp.examples;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.operation.Operations;
-import jromp.parallel.var.ReductionVariable;
-import jromp.parallel.var.Variables;
-import jromp.parallel.var.reduction.ReductionOperations;
+import jromp.JROMP;
+import jromp.operation.Operations;
+import jromp.var.ReductionVariable;
+import jromp.var.Variables;
+import jromp.var.reduction.ReductionOperations;
 
 public class PiCalculationWithReduction {
     public static void main(String[] args) {
@@ -15,20 +15,20 @@ public class PiCalculationWithReduction {
 
         long initialTime = System.nanoTime();
 
-        Parallel.defaultConfig()
-                .withVariables(vars)
-                .parallelFor(1, n + 1, false, (id, start, end, variables) -> {
-                    double x;
-                    double sum = 0.0;
+        JROMP.allThreads()
+             .withVariables(vars)
+             .parallelFor(1, n + 1, false, (start, end, variables) -> {
+                 double x;
+                 double sum = 0.0;
 
-                    for (int i = start; i < end; i++) {
-                        x = h * (i - 0.5);
-                        sum += calc(x);
-                    }
+                 for (int i = start; i < end; i++) {
+                     x = h * (i - 0.5);
+                     sum += calc(x);
+                 }
 
-                    variables.<Double>get("sum").update(Operations.add(sum).get());
-                })
-                .join();
+                 variables.<Double>get("sum").update(Operations.add(sum).get());
+             })
+             .join();
 
         double finalResult = h * result.value();
         long finalTime = System.nanoTime();

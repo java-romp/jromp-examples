@@ -1,28 +1,30 @@
 package jromp.examples;
 
-import jromp.parallel.Parallel;
-import jromp.parallel.construct.critical.Critical;
-import jromp.parallel.operation.Operations;
-import jromp.parallel.var.SharedVariable;
-import jromp.parallel.var.Variables;
+import jromp.JROMP;
+import jromp.construct.critical.Critical;
+import jromp.operation.Operations;
+import jromp.var.SharedVariable;
+import jromp.var.Variables;
+
+import static jromp.JROMP.getThreadNum;
 
 public class CriticalExample {
     public static void main(String[] args) {
         Variables variables = Variables.create().add("criticalVar", new SharedVariable<>(0));
 
-        Parallel.withThreads(4)
-                .withVariables(variables)
-                .block(((id, vars) -> {
-                    System.out.printf("1 - Thread %d%n", id);
+        JROMP.withThreads(4)
+             .withVariables(variables)
+             .block(vars -> {
+                    System.out.printf("1 - Thread %d%n", getThreadNum());
 
-                    Critical.enter("criticalVar", id, vars, (i, v) -> {
+                    Critical.enter("criticalVar", vars, v -> {
                         v.<Integer>get("criticalVar").update(Operations.add(1).get());
 
-                        System.out.printf("Critical thread %d%n", i);
+                        System.out.printf("Critical thread %d%n", getThreadNum());
                     });
 
-                    System.out.printf("2 - Thread %d%n", id);
-                }))
-                .join();
+                    System.out.printf("2 - Thread %d%n", getThreadNum());
+                })
+             .join();
     }
 }

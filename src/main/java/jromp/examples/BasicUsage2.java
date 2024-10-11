@@ -1,27 +1,29 @@
 package jromp.examples;
 
 import jromp.Constants;
-import jromp.parallel.Parallel;
-import jromp.parallel.var.SharedVariable;
-import jromp.parallel.var.Variable;
+import jromp.JROMP;
+import jromp.var.SharedVariable;
+import jromp.var.Variable;
+
+import static jromp.JROMP.getThreadNum;
 
 public class BasicUsage2 {
     public static void main(String[] args) {
         Variable<Integer> threads = new SharedVariable<>(0);
 
-        Parallel.defaultConfig()
-                .block((id, variables) -> {
-                    int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
-                    threads.set(numThreads);
+        JROMP.allThreads()
+             .block(variables -> {
+                 int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
+                 threads.set(numThreads);
 
-                    System.out.printf("Hello World from thread %d of %d%n", id, numThreads);
-                })
-                .parallelFor(0, threads.value(), false, (id, start, end, variables) -> {
-                    for (int i = start; i < end; i++) {
-                        System.out.printf("Thread %d: %d%n", id, i);
-                    }
-                })
-                .block((id, variables) -> System.out.printf("Thread %d done%n", id))
-                .join();
+                 System.out.printf("Hello World from thread %d of %d%n", getThreadNum(), numThreads);
+             })
+             .parallelFor(0, threads.value(), false, (start, end, variables) -> {
+                 for (int i = start; i < end; i++) {
+                     System.out.printf("Thread %d: %d%n", getThreadNum(), i);
+                 }
+             })
+             .block(variables -> System.out.printf("Thread %d done%n", getThreadNum()))
+             .join();
     }
 }

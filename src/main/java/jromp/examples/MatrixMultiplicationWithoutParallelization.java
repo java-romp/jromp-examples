@@ -1,8 +1,9 @@
 package jromp.examples;
 
-import jromp.parallel.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static jromp.JROMP.getWTime;
 
 public class MatrixMultiplicationWithoutParallelization {
     private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationWithoutParallelization.class);
@@ -25,7 +26,7 @@ public class MatrixMultiplicationWithoutParallelization {
         }
 
         // Start the timer
-        final double start = Utils.getWTime();
+        final double start = getWTime();
 
         // Matrix multiplication
         for (int i = 0; i < N; i++) {
@@ -54,7 +55,7 @@ public class MatrixMultiplicationWithoutParallelization {
         // endregion
 
         // Print the execution time
-        final double end = Utils.getWTime();
+        final double end = getWTime();
         logger.info("Time: {}", end - start);
 
         // Free memory
