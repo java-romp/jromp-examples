@@ -1,6 +1,5 @@
 package jromp.examples;
 
-import jromp.Constants;
 import jromp.JROMP;
 import jromp.operation.Operations;
 import jromp.var.PrivateVariable;
@@ -10,6 +9,7 @@ import jromp.var.Variables;
 
 import java.util.Random;
 
+import static jromp.JROMP.getNumThreads;
 import static jromp.JROMP.getThreadNum;
 
 public class ParallelForBase {
@@ -63,23 +63,22 @@ public class ParallelForBase {
         JROMP.withThreads(4) //! Should match the value of N and M
              .withVariables(vars)
              .parallelFor(0, m, false, (start, end, variables) -> {
-                    for (int k = start; k < end; k++) {
-                        int id = getThreadNum();
-                        int nThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
-                        Variable<Integer> sumInternal = variables.get("sum");
-                        sumInternal.set(0);
+                 for (int k = start; k < end; k++) {
+                     int id = getThreadNum();
+                     Variable<Integer> sumInternal = variables.get("sum");
+                     sumInternal.set(0);
 
-                        for (int j1 = 0; j1 < n; j1++) {
-                            int firstOperand = variables.<int[][]>get("b").value()[id][j1];
-                            int secondOperand = variables.<int[]>get("c").value()[j1];
+                     for (int j1 = 0; j1 < n; j1++) {
+                         int firstOperand = variables.<int[][]>get("b").value()[id][j1];
+                         int secondOperand = variables.<int[]>get("c").value()[j1];
 
-                            sumInternal.update(Operations.add(firstOperand * secondOperand).get());
-                        }
+                         sumInternal.update(Operations.add(firstOperand * secondOperand).get());
+                     }
 
-                        variables.<int[]>get("a").value()[id] = sumInternal.value();
-                        System.out.printf("Thread %d of %d, calculates the iteration i=%d%n", id, nThreads, id);
-                    }
-                })
+                     variables.<int[]>get("a").value()[id] = sumInternal.value();
+                     System.out.printf("Thread %d of %d, calculates the iteration i=%d%n", id, getNumThreads(), id);
+                 }
+             })
              .join();
 
         for (i = 0; i < M; i++) {

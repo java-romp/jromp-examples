@@ -15,16 +15,16 @@ public class CriticalExample {
         JROMP.withThreads(4)
              .withVariables(variables)
              .block(vars -> {
-                    System.out.printf("1 - Thread %d%n", getThreadNum());
+                 System.out.printf("1 - Thread %d%n", getThreadNum());
 
-                    Critical.enter("criticalVar", vars, v -> {
-                        v.<Integer>get("criticalVar").update(Operations.add(1).get());
+                 Critical.enter("criticalVar", vars, v -> {
+                     v.<Integer>get("criticalVar").update(Operations.add(1).get());
 
-                        System.out.printf("Critical thread %d%n", getThreadNum());
-                    });
+                     System.out.printf("Critical thread %d%n", getThreadNum());
+                 });
 
-                    System.out.printf("2 - Thread %d%n", getThreadNum());
-                })
+                 System.out.printf("2 - Thread %d%n", getThreadNum());
+             })
              .join();
     }
 }

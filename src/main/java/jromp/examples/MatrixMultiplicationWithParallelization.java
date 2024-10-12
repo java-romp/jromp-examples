@@ -1,6 +1,5 @@
 package jromp.examples;
 
-import jromp.Constants;
 import jromp.JROMP;
 import jromp.operation.Operations;
 import jromp.var.ReductionVariable;
@@ -11,6 +10,7 @@ import jromp.var.reduction.ReductionOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static jromp.JROMP.getNumThreads;
 import static jromp.JROMP.getWTime;
 
 public class MatrixMultiplicationWithParallelization {
@@ -22,8 +22,7 @@ public class MatrixMultiplicationWithParallelization {
         // Print the available number of threads
         JROMP.allThreads()
              .singleBlock(false, variables -> {
-                 int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
-                 logger.info("Number of threads: {}", numThreads);
+                 logger.info("Number of threads: {}", getNumThreads());
              })
              .join();
 

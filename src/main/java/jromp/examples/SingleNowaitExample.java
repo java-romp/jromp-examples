@@ -13,9 +13,9 @@ public class SingleNowaitExample {
         JROMP.withThreads(4)
              .block(vars -> System.out.printf("1 - Thread %d%n", getThreadNum()))
              .singleBlock(true, vars -> {
-                    singleVar.set(1);
-                    System.out.printf("Single block executed by thread %d%n", getThreadNum());
-                })
+                 singleVar.set(1);
+                 System.out.printf("Single block executed by thread %d%n", getThreadNum());
+             })
              .block(vars -> System.out.printf("Thread %d has finished%n", getThreadNum()))
              .join();
 

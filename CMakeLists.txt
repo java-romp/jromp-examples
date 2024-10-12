@@ -30,6 +30,7 @@ add_executable(atomic ${EXAMPLES_DIR}/atomic.c)
 add_executable(critical ${EXAMPLES_DIR}/critical.c)
 add_executable(if ${EXAMPLES_DIR}/if.c)
 add_executable(matrix_multiplication ${EXAMPLES_DIR}/matrix_multiplication.c)
+add_executable(num_threads ${EXAMPLES_DIR}/num_threads.c)
 
 add_executable(mandelbrot_original ${EXAMPLES_DIR}/mandelbrot/mandelbrot_original.c
         ${EXAMPLES_DIR}/mandelbrot/mandelbrot.h)

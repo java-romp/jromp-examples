@@ -1,10 +1,10 @@
 package jromp.examples;
 
-import jromp.Constants;
 import jromp.JROMP;
 import jromp.var.SharedVariable;
 import jromp.var.Variable;
 
+import static jromp.JROMP.getNumThreads;
 import static jromp.JROMP.getThreadNum;
 
 public class BasicUsage2 {
@@ -13,7 +13,7 @@ public class BasicUsage2 {
 
         JROMP.allThreads()
              .block(variables -> {
-                 int numThreads = variables.<Integer>get(Constants.NUM_THREADS).value();
+                 int numThreads = getNumThreads();
                  threads.set(numThreads);
 
                  System.out.printf("Hello World from thread %d of %d%n", getThreadNum(), numThreads);
