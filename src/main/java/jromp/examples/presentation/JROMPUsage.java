@@ -32,27 +32,27 @@ public class JROMPUsage {
 
 /*
 JROMP.allThreads()
-             .block(variables -> {
-                 logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
-             })
-             .join();
+     .block(variables -> {
+         logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
+     })
+     .join();
  */
 
 /*
 Variable<Integer> privateVar = new PrivateVariable<>(0);
-        Variables vars = Variables.create()
-                                  .add("privateVar", privateVar);
+Variables vars = Variables.create()
+                          .add("privateVar", privateVar);
 
-        JROMP.allThreads()
-             .withVariables(vars)
-             .block(variables -> {
-                 Variable<Integer> privateVarLocal = variables.get("privateVar");
+JROMP.allThreads()
+     .withVariables(vars)
+     .block(variables -> {
+         Variable<Integer> privateVarLocal = variables.get("privateVar");
 
-                 privateVarLocal.update(Operations.add(1));
+         privateVarLocal.update(Operations.add(1));
 
-                 logger.info("Value of privateVar: {}", privateVarLocal.value());
-             })
-             .join();
+         logger.info("Value of privateVar: {}", privateVarLocal.value());
+     })
+     .join();
 
-        logger.info("Final value of privateVar: {}", privateVar.value());
+logger.info("Final value of privateVar: {}", privateVar.value());
  */
