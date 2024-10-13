@@ -39,7 +39,7 @@ public class MatrixMultiplicationSequential {
             }
         }
 
-        // region Optional(advanced): Create another loop with reduction variable.
+        // region Optional(advanced): Create another loop with a reduction variable.
 
         if (OPTIONAL_PART) {
             double sum = 0.0;
