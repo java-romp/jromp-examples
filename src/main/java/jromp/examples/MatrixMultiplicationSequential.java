@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import static jromp.JROMP.getWTime;
 
-public class MatrixMultiplicationWithoutParallelization {
-    private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationWithoutParallelization.class);
+public class MatrixMultiplicationSequential {
+    private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationSequential.class);
     private static final int N = 2000;
     private static final boolean OPTIONAL_PART = true;
 

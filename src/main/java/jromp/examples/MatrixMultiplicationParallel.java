@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import static jromp.JROMP.getNumThreads;
 import static jromp.JROMP.getWTime;
 
-public class MatrixMultiplicationWithParallelization {
-    private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationWithParallelization.class);
+public class MatrixMultiplicationParallel {
+    private static final Logger logger = LoggerFactory.getLogger(MatrixMultiplicationParallel.class);
     private static final int N = 2000;
     private static final boolean OPTIONAL_PART = true;
 
