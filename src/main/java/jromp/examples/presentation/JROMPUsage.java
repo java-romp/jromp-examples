@@ -1,34 +1,58 @@
 package jromp.examples.presentation;
 
 import jromp.JROMP;
-import jromp.operation.Operations;
-import jromp.var.PrivateVariable;
-import jromp.var.Variable;
-import jromp.var.Variables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static jromp.JROMP.getNumThreads;
 import static jromp.JROMP.getThreadNum;
 
 @SuppressWarnings("all")
 public class JROMPUsage {
     private static final Logger logger = LoggerFactory.getLogger(JROMPUsage.class);
 
+    /*
+     * Code structure:
+     *   1. Specify the number of threads to use.
+     *   2. Define the block(s) of code to be executed.
+     *   3. Join the threads.
+     */
+
     public static void main(String[] args) {
-        Variables vars = Variables.create();
-        vars.add("privateVar", new PrivateVariable<>(0));
+        JROMP.allThreads() // 1.
+             // 2. (
+             .block(variables -> {
+                 logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
+             })
+             // 2. )
+             .join(); // 3.
+    }
+}
+
+
+/*
+JROMP.allThreads()
+             .block(variables -> {
+                 logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
+             })
+             .join();
+ */
+
+/*
+Variable<Integer> privateVar = new PrivateVariable<>(0);
+        Variables vars = Variables.create()
+                                  .add("privateVar", privateVar);
 
         JROMP.allThreads()
              .withVariables(vars)
              .block(variables -> {
-                 Variable<Integer> privateVar = variables.get("privateVar");
+                 Variable<Integer> privateVarLocal = variables.get("privateVar");
 
-                 privateVar.update(Operations.assign(1));
+                 privateVarLocal.update(Operations.add(1));
 
-                 logger.info("Hello World from thread {} of {}", getThreadNum(), privateVar.value());
+                 logger.info("Value of privateVar: {}", privateVarLocal.value());
              })
              .join();
 
-        logger.info("privateVar = {}", vars.get("privateVar").value());
-    }
-}
+        logger.info("Final value of privateVar: {}", privateVar.value());
+ */
