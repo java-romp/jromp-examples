@@ -5,12 +5,11 @@
 #define N 2000
 #define OPTIONAL_PART 1
 
-// ReSharper disable CppParameterNeverUsed
-int main(int argc, char *argv[]) {
+int main() {
     // Print the available number of threads
     #pragma omp parallel
     {
-        // Only one thread can print this message
+        // Only one thread prints this message
         #pragma omp single
         {
             printf("Number of threads: %d\n", omp_get_num_threads());
@@ -44,7 +43,7 @@ int main(int argc, char *argv[]) {
     }
 
     // This type of pragma is only used for annotation purposes, it does not affect the code execution
-    #pragma region Optional(advanced): Create another loop with reduction variable.
+    #pragma region Optional(extra point): Create another loop with a reduction variable.
 
     if (OPTIONAL_PART) {
         double sum = 0.0;
