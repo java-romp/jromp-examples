@@ -22,7 +22,7 @@ public class SharedVariableExample {
 
         JROMP.allThreads()
              .withVariables(variables)
-             .block(vars -> {
+             .parallel(vars -> {
                  Variable<Integer> sharedVariable = vars.get("sharedVariable");
                  sharedVariable.update(Operations.add(1));
                  logger.info("Thread {}: {}", getThreadNum(), sharedVariable.value());

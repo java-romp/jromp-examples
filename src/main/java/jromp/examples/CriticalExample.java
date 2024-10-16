@@ -14,7 +14,7 @@ public class CriticalExample {
 
         JROMP.withThreads(4)
              .withVariables(variables)
-             .block(vars -> {
+             .parallel(vars -> {
                  System.out.printf("1 - Thread %d%n", getThreadNum());
 
                  Critical.enter("criticalVar", vars, v -> {

@@ -19,7 +19,7 @@ public class LastPrivateVariableExample {
 
         JROMP.withThreads(4)
              .withVariables(variables)
-             .block(vars -> vars.get("lastPrivateVariable").set(getThreadNum()))
+             .parallel(vars -> vars.get("lastPrivateVariable").set(getThreadNum()))
              .join();
 
         Integer lastValue = (Integer) variables.get("lastPrivateVariable").value();

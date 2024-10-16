@@ -12,7 +12,7 @@ public class BasicUsage1 {
 
     public static void main(String[] args) {
         JROMP.allThreads()
-             .block(variables -> {
+             .parallel(variables -> {
                  logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
              })
              .join();

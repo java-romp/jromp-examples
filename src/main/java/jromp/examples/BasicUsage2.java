@@ -12,7 +12,7 @@ public class BasicUsage2 {
         Variable<Integer> threads = new SharedVariable<>(0);
 
         JROMP.allThreads()
-             .block(variables -> {
+             .parallel(variables -> {
                  int numThreads = getNumThreads();
                  threads.set(numThreads);
 
@@ -23,7 +23,7 @@ public class BasicUsage2 {
                      System.out.printf("Thread %d: %d%n", getThreadNum(), i);
                  }
              })
-             .block(variables -> System.out.printf("Thread %d done%n", getThreadNum()))
+             .parallel(variables -> System.out.printf("Thread %d done%n", getThreadNum()))
              .join();
     }
 }

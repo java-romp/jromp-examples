@@ -19,7 +19,7 @@ public class FirstPrivateVariableExample {
 
         JROMP.withThreads(4)
              .withVariables(variables)
-             .block(vars -> {
+             .parallel(vars -> {
                  logger.info("Thread {} sees \"val\" = {}, and updates it to be {}.",
                              getThreadNum(), vars.get("firstPrivateVariable").value(), getThreadNum());
                  vars.get("firstPrivateVariable").set(getThreadNum());

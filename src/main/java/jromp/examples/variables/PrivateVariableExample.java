@@ -17,7 +17,7 @@ public class PrivateVariableExample {
 
         JROMP.allThreads()
              .withVariables(variables)
-             .block(vars -> {
+             .parallel(vars -> {
                  Variable<Integer> privateVar = vars.get("privateVariable");
                  privateVar.set(getThreadNum());
                  logger.info("Thread {}", privateVar.value());

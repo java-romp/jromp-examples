@@ -12,7 +12,7 @@ public class AtomicExample {
 
         JROMP.allThreads()
              .withVariables(variables)
-             .block(vars -> Atomic.update("count", Operations.add(1), vars))
+             .parallel(vars -> Atomic.update("count", Operations.add(1), vars))
              .join();
 
         System.out.printf("Number of threads: %d%n", variables.<Integer>get("count").value());

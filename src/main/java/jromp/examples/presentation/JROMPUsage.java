@@ -21,7 +21,7 @@ public class JROMPUsage {
     public static void main(String[] args) {
         JROMP.allThreads() // 1.
              // 2. (
-             .block(variables -> {
+             .parallel(variables -> {
                  logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
              })
              // 2. )
@@ -32,7 +32,7 @@ public class JROMPUsage {
 
 /*
 JROMP.allThreads()
-     .block(variables -> {
+     .parallel(variables -> {
          logger.info("Hello World from thread {} of {}", getThreadNum(), getNumThreads());
      })
      .join();
@@ -45,7 +45,7 @@ Variables vars = Variables.create()
 
 JROMP.allThreads()
      .withVariables(vars)
-     .block(variables -> {
+     .parallel(variables -> {
          Variable<Integer> privateVarLocal = variables.get("privateVar");
 
          privateVarLocal.update(Operations.add(1));
