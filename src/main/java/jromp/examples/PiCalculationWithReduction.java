@@ -6,6 +6,8 @@ import jromp.var.ReductionVariable;
 import jromp.var.Variables;
 import jromp.var.reduction.ReductionOperations;
 
+import static jromp.JROMP.getWTime;
+
 public class PiCalculationWithReduction {
     public static void main(String[] args) {
         int n = 100000;
@@ -13,7 +15,7 @@ public class PiCalculationWithReduction {
         ReductionVariable<Double> result = new ReductionVariable<>(ReductionOperations.sum(), 0d);
         Variables vars = Variables.create().add("sum", result);
 
-        long initialTime = System.nanoTime();
+        double initialTime = getWTime();
 
         JROMP.allThreads()
              .withVariables(vars)
@@ -31,9 +33,9 @@ public class PiCalculationWithReduction {
              .join();
 
         double finalResult = h * result.value();
-        long finalTime = System.nanoTime();
+        double finalTime = getWTime();
 
-        System.out.printf("Time: %fms%n", (finalTime - initialTime) / 1e6);
+        System.out.printf("Time: %fms%n", (finalTime - initialTime) * 1000);
         System.out.printf("PI is approximately: %.16f. Error: %.16f%n", finalResult,
                           Math.abs(finalResult - Math.PI));
     }
